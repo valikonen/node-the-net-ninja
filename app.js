@@ -1,39 +1,33 @@
-var events = require("events");
-
-// var myEmitter = new events.EventEmitter();
-// myEmitter.on('someEvent', msg => console.log(msg));
-// myEmitter.emit('someEvent', 'Fortza CFR Emitter');
+var http = require('http');
+var fs = require('fs');
 
 
-var util = require('util');
+let myReadStream = fs.createReadStream(__dirname + '/readMe.txt', 'utf8');
+let myWriteStream = fs.createWriteStream(__dirname + '/writeMe.txt');
 
-var Person = function(name) {
-    this.name = name;
-}
+//Create a pipe
+myReadStream.pipe(myWriteStream);
+
+//SAU
+
+// myReadStream.on('data', chunk => {
+//     console.log('New chunck recived!!!');
+//     console.log(chunk);
+//     myWriteStream.write(chunk);
+// });
 
 
-util.inherits(Person, events.EventEmitter);
+const server = http.createServer( (req, res) => {
 
-var Zoro = new Person('Zoro')
-var Astru = new Person('Astru')
-var Petru = new Person('Petru')
+    res.writeHead(200, {'Content-Type': 'text/plain'});
 
-let people = ['Zoro', 'Astru', 'Petru'];
+    console.log(req.url);
 
-people.forEach( function(person) {
-    person.on('speak', function(msg) {
-        console.log(person + ' said ' + msg);
-    });
+    let myReadStream2 = fs.createReadStream(__dirname + '/readMe.txt', 'utf8');
+
+    myReadStream2.pipe(res);
+
 });
 
+server.listen(1000, '127.0.0.1', () => console.log('App running ar http://localhost:1000'));
 
-Zoro.emit('speak', 'pam pam pam');
-
-
-// let mod = require('./module');
-
-// const arr = [1,24,5,5];
-
-// console.log(mod.counter(arr));
-
-// console.log(mod.add(8, 2));
